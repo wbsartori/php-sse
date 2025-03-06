@@ -1,0 +1,17 @@
+{
+    "name": "wbsartori/phpsse",
+    "autoload": {
+        "psr-4": {
+            "App\\PhpSSE\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "wesley.sartori",
+            "email": "wesley.sartori@ixcsoft.com.br"
+        }
+    ],
+    "require": {
+      "ext-json": "*"
+    }
+}

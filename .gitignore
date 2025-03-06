@@ -1,5 +1,10 @@
 # CakePHP 3
 
+.idea/
+.idea/.gitignore
+.idea/vcs.xml
+
+
 /vendor/*
 /config/app.php
 
@@ -23,3 +28,6 @@
 /app/Config/core.php
 /app/Config/database.php
 /vendors/*
+
+/public/teste.php
+/public/sse.php
