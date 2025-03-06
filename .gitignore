@@ -1,6 +1,6 @@
 # CakePHP 3
 
-.idea/
+.idea/*
 .idea/.gitignore
 .idea/vcs.xml
 
