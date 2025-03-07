@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sartori\PhpSSE\Events\Interfaces;
+namespace App\PhpSSE\Events\Interfaces;
 
 interface EventsSseInterface
 {

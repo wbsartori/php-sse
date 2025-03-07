@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\PhpSSE\Events;
 
+use App\PhpSSE\Config;
 use App\PhpSSE\Events\Interfaces\EventsSseInterface;
-use App\PhpSSE\Settings\Config;
 
 class Event implements EventsSseInterface
 {

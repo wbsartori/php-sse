@@ -9,7 +9,7 @@ class EventSource
     private string $url = '';
     private array $params = [];
 
-    public function __construct(string $url, array $params = [])
+    public function __construct(array $params = [], string $url = '')
     {
         $this->url = $url;
         $this->params = $params;
@@ -18,51 +18,24 @@ class EventSource
 
     public function exec(): void
     {
-        $this->event2();
+        $this->event();
     }
 
     private function event(): void
     {
         header('Content-Type: text/html; charset=UTF-8');
-
-        // Criação da div
-        $event = '<div id="' . htmlspecialchars($this->params['id']) . '"></div>';
-
-        // Código JavaScript usando heredoc para melhor legibilidade
-        $event .= <<<HTML
-        <script defer>
-            document.addEventListener("DOMContentLoaded", function() {
-                const url = "{$this->url}";
-                const eventSource = new EventSource(url);
-                eventSource.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        console.log("Nova mensagem SSE:", data);
-                    } catch (error) {
-                        console.error("Erro ao processar mensagem SSE:", error);
-                    }
-                };    
-                eventSource.onerror = function(event) {
-                    console.error("Erro na conexão SSE:", event);
-                    eventSource.close();
-                };
-            });
-        </script>
-        HTML;
-
-        echo $event;
-    }
-
-    private function event2(): void
-    {
-        header('Content-Type: text/html; charset=UTF-8');
-        $loadBootstrapJS = LoadJS::make()->filename('load-bootstrap')->load();
-        $notificationJS = LoadJS::make()->filename('notification')->load();
-        $progressBarJS = LoadJS::make()->filename('progress-bar')->load();
-        $event = '<div id="' . htmlspecialchars($this->params['id']) . '" data-url="' . htmlspecialchars($this->url) . '"></div>';
-        $event .= '<script defer>'. $loadBootstrapJS .'</script>';
-        $event .= '<script defer>'. $notificationJS. '</script>';
-        $event .= '<script defer>'. $progressBarJS. '</script>';
+        $funcs = LoadJS::make()->filename('load-func')->load();
+        $notificationID = 'notifications-' . htmlspecialchars($this->params['type']);
+        $event = '<!DOCTYPE html>';
+        $event .= '<html>';
+        $event .= '<head>';
+        $event .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>';
+        $event .= '<script defer>' . $funcs . '</script>';
+        $event .= '</head>';
+        $event .= '<div id="' . $notificationID . '"></div>';
+        $event .= '<script>notification("' . $notificationID . '", 5000, "'.$this->params['message'].'");</script>';
+        $event .= '</html>';
         echo $event;
     }
 

@@ -3,7 +3,7 @@
 .idea/*
 .idea/.gitignore
 .idea/vcs.xml
-
+.env
 
 /vendor/*
 /config/app.php

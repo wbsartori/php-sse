@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\PhpSSE\Notifications;
 
-use App\PhpSSE\EventSource;
+use App\PhpSSE\LoadJS;
 use Exception;
 use App\PhpSSE\Events\Event;
 use App\PhpSSE\Events\Interfaces\EventsSseInterface;
-use App\PhpSSE\Notifications\Interfaces\NotificationsInterface;
 
 class Notification
 {
@@ -23,11 +22,8 @@ class Notification
     private string $warning = '';
     private string $error = '';
 
-    public static function make(string $url = null)
+    public static function make()
     {
-        if ($url !== null) {
-            self::$url = $url;
-        }
         self::$event = new Event();
         return new self();
     }
@@ -104,13 +100,19 @@ class Notification
 
     public function send()
     {
-        $eventSource = new EventSource(self::$url, [
-            'type' => $this->type(),
-            'url' => self::$url ?? '',
-            'title' => $this->title ?? '',
-            'message' => $this->message ?? '',
-            'event' => self::$event,
-        ]);
-        $eventSource->exec();
+        header('Content-Type: text/html; charset=UTF-8');
+        $funcs = LoadJS::make()->filename('load-func')->load();
+        $notificationID = 'notifications-' . htmlspecialchars($this->type());
+        $event = '<!DOCTYPE html>';
+        $event .= '<html>';
+        $event .= '<head>';
+        $event .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>';
+        $event .= '<script defer>' . $funcs . '</script>';
+        $event .= '</head>';
+        $event .= '<div id="' . $notificationID . '"></div>';
+        $event .= '<script>notification("' . $notificationID . '", 5000, "'.$this->message.'");</script>';
+        $event .= '</html>';
+        echo $event;
     }
 }
